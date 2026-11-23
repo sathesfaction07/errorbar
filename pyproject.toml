@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "evaluation-platform"
+version = "1.0.0"
+description = "An evaluation system where every number carries its uncertainty and provenance, and promotion on a gain inside noise is a type error"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+]
+
+[project.optional-dependencies]
+# The four crosschecks compare this package's statistics against independent reference
+# implementations. They are test dependencies, not runtime ones -- and they are REQUIRED for
+# the suite: a missing one would turn a crosscheck into COULD_NOT_RUN, which is exactly the
+# silent gap the three-state exit code exists to expose.
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+    "statsmodels>=0.14",
+    "choix>=0.3.5",
+    "krippendorff>=0.6",
+    "scikit-learn>=1.3",
+]
+
+[tool.setuptools.packages.find]
+include = ["evalplat*"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+# Pinned, so the result does not move with ruff's default rule set between releases.
+select = ["E", "F", "I", "W"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

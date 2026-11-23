@@ -117,7 +117,9 @@ def wilson_ci(successes: int, n: int, level: float = 0.95) -> Interval:
     return Interval(lo, hi, level, "wilson", n)
 
 
-def _normal_approx_ci_DO_NOT_USE(successes: int, n: int, level: float = 0.95) -> tuple[float, float]:
+def _normal_approx_ci_DO_NOT_USE(
+    successes: int, n: int, level: float = 0.95
+) -> tuple[float, float]:
     """RETAINED AS A COUNTER-EXAMPLE. Not exported, not used, deliberately ugly.
 
     This is the interval most eval code actually computes. `tests/test_evalplat.py`

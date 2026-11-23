@@ -22,35 +22,66 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from evalplat.audit.provenance import (  # noqa: E402
-    EvalSet, JudgeBundle, ProvenanceError, canonical_hash,
+    EvalSet,
+    JudgeBundle,
+    ProvenanceError,
+    canonical_hash,
 )
 from evalplat.core import Report, Result, Verdict  # noqa: E402
+from evalplat.gates.null_judge import (  # noqa: E402
+    FlakyJudge,
+    UnreachableJudge,
+    WorkingJudge,
+    naive_score_eval_set_DO_NOT_USE,
+    null_judge_gate,
+    score_eval_set,
+)
 from evalplat.gates.promotion import (  # noqa: E402
-    PromotionDecision, PromotionError, naive_promotion_DO_NOT_USE, promotion_gate,
+    PromotionDecision,
+    PromotionError,
+    naive_promotion_DO_NOT_USE,
+    promotion_gate,
 )
 from evalplat.gates.slice import (  # noqa: E402
-    SliceError, SliceSpec, aggregate_only_gate_DO_NOT_USE, slice_gate,
-)
-from evalplat.gates.null_judge import (  # noqa: E402
-    FlakyJudge, UnreachableJudge, WorkingJudge, naive_score_eval_set_DO_NOT_USE,
-    null_judge_gate, score_eval_set,
+    SliceError,
+    SliceSpec,
+    aggregate_only_gate_DO_NOT_USE,
+    slice_gate,
 )
 from evalplat.judges.agreement import (  # noqa: E402
-    MeasurementLevel, cohen_kappa, krippendorff_alpha, percent_agreement,
+    MeasurementLevel,
+    cohen_kappa,
+    krippendorff_alpha,
+    percent_agreement,
 )
 from evalplat.numbers.ci import (  # noqa: E402
-    _normal_approx_ci_DO_NOT_USE, analytic_mean_ci, bootstrap_ci, estimate_mean,
-    estimate_proportion, wilson_ci,
+    _normal_approx_ci_DO_NOT_USE,
+    analytic_mean_ci,
+    bootstrap_ci,
+    estimate_mean,
+    estimate_proportion,
+    wilson_ci,
 )
 from evalplat.numbers.estimate import (  # noqa: E402
-    EXACT_JUDGE, ComparisonVerdict, Estimate, EstimateError, Interval, Metric,
-    Provenance, compare,
+    EXACT_JUDGE,
+    ComparisonVerdict,
+    Estimate,
+    EstimateError,
+    Interval,
+    Metric,
+    Provenance,
+    compare,
 )
 from evalplat.preference.bt import (  # noqa: E402
-    bradley_terry, rank_displacement, win_rate_ranking,
+    bradley_terry,
+    rank_displacement,
+    win_rate_ranking,
 )
 from evalplat.stats.multiplicity import (  # noqa: E402
-    benjamini_hochberg, bonferroni, paired_pvalue, unadjusted_DO_NOT_USE,
+    benjamini_hochberg,
+    bonferroni,
+    paired_pvalue,
+    unadjusted_DO_NOT_USE,
 )
 
 ACC = Metric("accuracy", higher_is_better=True)
@@ -93,7 +124,9 @@ def test_refusals(make, why):
 
 def test_ordering_operators_all_refuse():
     a = Estimate(0.80, IV, PROV, ACC)
-    b = Estimate(0.82, Interval(0.78, 0.86, 0.95, "b", 200), Provenance("v2", "judge_v1", "set_a"), ACC)
+    b = Estimate(
+        0.82, Interval(0.78, 0.86, 0.95, "b", 200), Provenance("v2", "judge_v1", "set_a"), ACC
+    )
     for op in ("__gt__", "__lt__", "__ge__", "__le__"):
         with pytest.raises(EstimateError):
             getattr(a, op)(b)
@@ -131,8 +164,10 @@ def test_eval_set_change_is_incomparable():
 
 def test_lower_is_better_metric_gets_the_sign_right():
     """REVERSE-SIGN TEST. A latency DECREASE must read BETTER, and an increase WORSE."""
-    fast = compare(_est(420, 400, 440, "v1", LAT, EXACT_JUDGE), _est(300, 290, 310, "v2", LAT, EXACT_JUDGE))
-    slow = compare(_est(300, 290, 310, "v1", LAT, EXACT_JUDGE), _est(420, 400, 440, "v2", LAT, EXACT_JUDGE))
+    high = (420, 400, 440)
+    low = (300, 290, 310)
+    fast = compare(_est(*high, "v1", LAT, EXACT_JUDGE), _est(*low, "v2", LAT, EXACT_JUDGE))
+    slow = compare(_est(*low, "v1", LAT, EXACT_JUDGE), _est(*high, "v2", LAT, EXACT_JUDGE))
     assert fast.verdict is ComparisonVerdict.BETTER
     assert slow.verdict is ComparisonVerdict.WORSE
 
@@ -149,7 +184,8 @@ def test_paired_is_more_powerful_than_overlap_test():
     rng = np.random.default_rng(7)
     base = rng.normal(0.80, 0.15, 400).clip(0, 1)
     cand = (base + 0.02).clip(0, 1)
-    eb, ec = estimate_mean(base, PROV, ACC), estimate_mean(cand, Provenance("v2", "judge_v1", "set_a"), ACC)
+    eb = estimate_mean(base, PROV, ACC)
+    ec = estimate_mean(cand, Provenance("v2", "judge_v1", "set_a"), ACC)
     assert eb.interval.overlaps(ec.interval), "fixture invalid: intervals must overlap"
     c = compare(eb, ec)
     assert c.verdict is ComparisonVerdict.BETTER
@@ -238,7 +274,9 @@ def test_crosscheck_bt_vs_choix():
                 games += [(a, b) if rng.random() < p else (b, a) for _ in range(40)]
     mine = bradley_terry(games, items, n_boot=0)
     idx = {it: k for k, it in enumerate(items)}
-    ref = choix.ilsr_pairwise(len(items), [(idx[w], idx[l]) for w, l in games], alpha=1e-9)
+    ref = choix.ilsr_pairwise(
+        len(items), [(idx[winner], idx[loser]) for winner, loser in games], alpha=1e-9
+    )
     ref = ref - ref.mean()
     assert np.max(np.abs(np.array(mine.theta) - ref)) < 1e-6
     assert mine.ranking == ("A", "B", "C", "D", "E")

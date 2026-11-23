@@ -42,7 +42,10 @@ from evalplat.core import Result, Verdict
 from evalplat.gates.slice import SliceReport, SliceSpec, slice_gate
 from evalplat.judges.agreement import AgreementReport
 from evalplat.numbers.estimate import (
-    EXACT_JUDGE, ComparisonVerdict, Estimate, compare,
+    EXACT_JUDGE,
+    ComparisonVerdict,
+    Estimate,
+    compare,
 )
 from evalplat.stats.multiplicity import benjamini_hochberg, paired_pvalue
 
@@ -161,7 +164,11 @@ def promotion_gate(
         )
         gates.append(Result(
             "gate.instrument",
-            Verdict.PASS if ok else judge_agreement.verdict if not judge_agreement.verdict.is_conclusive else Verdict.FAIL,
+            (
+                Verdict.PASS if ok
+                else judge_agreement.verdict if not judge_agreement.verdict.is_conclusive
+                else Verdict.FAIL
+            ),
             f"{judge_agreement.statistic}={judge_agreement.value:.4f} vs floor "
             f"{agreement_floor:.3f} -- {judge_agreement.reason}",
             {"value": judge_agreement.value, "floor": agreement_floor},

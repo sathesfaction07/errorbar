@@ -28,30 +28,51 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from evalplat.audit.provenance import EvalSet, JudgeBundle  # noqa: E402
 from evalplat.core import Report, Result, Verdict  # noqa: E402
-from evalplat.gates.promotion import (  # noqa: E402
-    naive_promotion_DO_NOT_USE, promotion_gate,
-)
-from evalplat.gates.slice import (  # noqa: E402
-    SliceSpec, aggregate_only_gate_DO_NOT_USE, slice_gate,
-)
 from evalplat.gates.null_judge import (  # noqa: E402
-    FlakyJudge, UnreachableJudge, WorkingJudge, naive_score_eval_set_DO_NOT_USE,
+    FlakyJudge,
+    UnreachableJudge,
+    WorkingJudge,
+    naive_score_eval_set_DO_NOT_USE,
     null_judge_gate,
 )
+from evalplat.gates.promotion import (  # noqa: E402
+    naive_promotion_DO_NOT_USE,
+    promotion_gate,
+)
+from evalplat.gates.slice import (  # noqa: E402
+    SliceSpec,
+    aggregate_only_gate_DO_NOT_USE,
+    slice_gate,
+)
 from evalplat.judges.agreement import (  # noqa: E402
-    MeasurementLevel, krippendorff_alpha, percent_agreement,
+    MeasurementLevel,
+    krippendorff_alpha,
+    percent_agreement,
 )
 from evalplat.numbers.ci import (  # noqa: E402
-    _normal_approx_ci_DO_NOT_USE, analytic_mean_ci, bootstrap_ci, estimate_mean, wilson_ci,
+    _normal_approx_ci_DO_NOT_USE,
+    bootstrap_ci,
+    estimate_mean,
+    wilson_ci,
 )
 from evalplat.numbers.estimate import (  # noqa: E402
-    EXACT_JUDGE, ComparisonVerdict, Estimate, Interval, Metric, Provenance, compare,
+    EXACT_JUDGE,
+    ComparisonVerdict,
+    Estimate,
+    Interval,
+    Metric,
+    Provenance,
+    compare,
 )
 from evalplat.preference.bt import (  # noqa: E402
-    bradley_terry, rank_displacement, win_rate_ranking,
+    bradley_terry,
+    rank_displacement,
+    win_rate_ranking,
 )
 from evalplat.stats.multiplicity import (  # noqa: E402
-    benjamini_hochberg, bonferroni, unadjusted_DO_NOT_USE,
+    benjamini_hochberg,
+    bonferroni,
+    unadjusted_DO_NOT_USE,
 )
 
 ACC = Metric("accuracy", higher_is_better=True)
@@ -146,7 +167,11 @@ def s2_judge_versioning(rep: Report) -> None:
     )
     rep.add(Result(
         "s2.judge_versioning",
-        Verdict.PASS if c.verdict is ComparisonVerdict.INCOMPARABLE and changed == 5 else Verdict.FAIL,
+        (
+            Verdict.PASS
+            if c.verdict is ComparisonVerdict.INCOMPARABLE and changed == 5
+            else Verdict.FAIL
+        ),
         f"a judge edit makes the comparison {c.verdict.value}; {changed}/5 identity "
         "fields independently change the hash",
         {"verdict": c.verdict.value, "fields_covered": changed},
@@ -162,7 +187,9 @@ def s3_judge_human_agreement(rep: Report) -> None:
     lazy = np.ones(200, dtype=int)
 
     g = krippendorff_alpha([humans.tolist(), good.tolist()], MeasurementLevel.NOMINAL, floor=0.667)
-    b = krippendorff_alpha([imbalanced.tolist(), lazy.tolist()], MeasurementLevel.NOMINAL, floor=0.667)
+    b = krippendorff_alpha(
+        [imbalanced.tolist(), lazy.tolist()], MeasurementLevel.NOMINAL, floor=0.667
+    )
     raw = percent_agreement(imbalanced, lazy)
     print(f"    genuine judge : {g.render()}")
     print(f"    lazy judge    : raw agreement {raw:.1%} -> alpha {b.value:+.4f}")
@@ -191,7 +218,7 @@ def s4_preference_modelling(rep: Report) -> None:
     wr_rank = tuple(sorted(items, key=lambda i: (-wr[i], i)))
     bt = bradley_terry(games, items, n_boot=400)
     d_wr, d_bt = rank_displacement(truth, wr_rank), rank_displacement(truth, bt.ranking)
-    print(f"    win rates: " + "  ".join(f"{i}={wr[i]:.3f}" for i in items))
+    print("    win rates: " + "  ".join(f"{i}={wr[i]:.3f}" for i in items))
     print(f"    win-rate ranking {wr_rank}  displacement={d_wr}")
     print(f"    BT ranking       {bt.ranking}  displacement={d_bt}")
     print(f"    truth            {truth}")
@@ -231,12 +258,18 @@ def s5_multiplicity(rep: Report) -> None:
     for t in range(trials):
         p = np.random.default_rng(1000 + t).uniform(0, 1, m)
         u, b, o = (unadjusted_DO_NOT_USE(p, .05), benjamini_hochberg(p, .05), bonferroni(p, .05))
-        un += u.n_rejected; bh += b.n_rejected; bo += o.n_rejected
-        any_un += u.n_rejected > 0; any_bh += b.n_rejected > 0
+        un += u.n_rejected
+        bh += b.n_rejected
+        bo += o.n_rejected
+        any_un += u.n_rejected > 0
+        any_bh += b.n_rejected > 0
     print(f"    8 models x 12 tasks = {m} comparisons, ALL nulls true, {trials} trials")
     print(f"    mean false discoveries: unadjusted={un/trials:.3f}  BH={bh/trials:.3f}  "
           f"bonferroni={bo/trials:.3f}")
-    print(f"    P(at least one false winner): unadjusted={any_un/trials:.1%}  BH={any_bh/trials:.1%}")
+    print(
+        f"    P(at least one false winner): unadjusted={any_un/trials:.1%}"
+        f"  BH={any_bh/trials:.1%}"
+    )
     rep.add(Result(
         "s5.multiplicity",
         Verdict.PASS if (un / trials > 3.0 and bh / trials < 0.5) else Verdict.FAIL,
@@ -252,7 +285,7 @@ def s6_null_judge(rep: Report) -> None:
     print("\nS6  null-judge fail-closed  [SIGNATURE TEST]")
     naive = naive_score_eval_set_DO_NOT_USE(UnreachableJudge(BUNDLE), EVALSET)
     print(f"    the naive harness on a DEAD judge returns a list of len={len(naive)}")
-    print(f"    ...which a caller reads as '0 failures' and a pipeline reads as green")
+    print("    ...which a caller reads as '0 failures' and a pipeline reads as green")
     dead = null_judge_gate(UnreachableJudge(BUNDLE), EVALSET)
     partial = null_judge_gate(FlakyJudge(BUNDLE, fail_every=5), EVALSET, coverage_floor=0.98)
     working = null_judge_gate(WorkingJudge(BUNDLE), EVALSET)
@@ -275,7 +308,8 @@ def s10_cost_latency(rep: Report) -> None:
     rng = np.random.default_rng(21)
     slow = rng.gamma(9.0, 40.0, 500)
     fast = rng.gamma(9.0, 28.0, 500)
-    p95 = lambda a: float(np.quantile(a, 0.95))
+    def p95(a):
+        return float(np.quantile(a, 0.95))
     e_slow = Estimate(p95(slow), bootstrap_ci(slow, p95, seed=1),
                       Provenance("v1", EXACT_JUDGE, EVALSET.hash), LAT)
     e_fast = Estimate(p95(fast), bootstrap_ci(fast, p95, seed=1),
@@ -315,7 +349,8 @@ def s9_slices(rep: Report) -> None:
     de_delta = float(cand[lang == "de"].mean() - base[lang == "de"].mean())
     print(f"    aggregate  {eb.point:.4f} -> {ec.point:.4f}  ({ec.point - eb.point:+.4f})")
     print(f"      en (450) {base[lang=='en'].mean():.4f} -> {cand[lang=='en'].mean():.4f}")
-    print(f"      de ( 50) {base[lang=='de'].mean():.4f} -> {cand[lang=='de'].mean():.4f}   <-- harmed")
+    de_base, de_cand = base[lang == 'de'].mean(), cand[lang == 'de'].mean()
+    print(f"      de ( 50) {de_base:.4f} -> {de_cand:.4f}   <-- harmed")
     naive = aggregate_only_gate_DO_NOT_USE(eb, ec)
     print(f"    aggregate-only gate (the defect) -> {naive.verdict.value}")
     print(f"    naive_promotion_DO_NOT_USE       -> {naive_promotion_DO_NOT_USE(eb, ec)}")
@@ -413,7 +448,7 @@ def main() -> int:
     print(rep.render())
     rep.to_json("findings.json")
     code = rep.exit_code()
-    print(f"\nwrote findings.json")
+    print("\nwrote findings.json")
     print({0: "EXIT 0 -- all required claims conclusive and passing",
            1: "EXIT 1 -- conclusive failure(s)",
            2: "EXIT 2 -- required claim(s) unverified"}[code])

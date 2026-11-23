@@ -194,7 +194,8 @@ def krippendorff_alpha(
 
 def cohen_kappa(rater_a: Sequence[float], rater_b: Sequence[float]) -> AgreementReport:
     """Cohen's kappa for two raters on nominal categories, complete data only."""
-    a = np.asarray(list(rater_a)); b = np.asarray(list(rater_b))
+    a = np.asarray(list(rater_a))
+    b = np.asarray(list(rater_b))
     if a.size != b.size:
         raise AgreementError(f"rater lengths differ: {a.size} vs {b.size}")
     if a.size == 0:
@@ -229,7 +230,8 @@ def percent_agreement(rater_a: Sequence[float], rater_b: Sequence[float]) -> flo
     """RAW agreement. Deliberately returns a bare float with no verdict, so it can
     never be mistaken for a gateable statistic. Present only so tests can measure
     the gap between it and kappa on imbalanced data -- see the module docstring."""
-    a = np.asarray(list(rater_a)); b = np.asarray(list(rater_b))
+    a = np.asarray(list(rater_a))
+    b = np.asarray(list(rater_b))
     if a.size != b.size or a.size == 0:
         raise AgreementError("percent_agreement needs equal-length non-empty inputs")
     return float((a == b).mean())

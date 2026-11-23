@@ -33,14 +33,18 @@ from __future__ import annotations
 
 from collections import Counter
 from dataclasses import dataclass
-from typing import Sequence
 
 import numpy as np
 
 from evalplat.core import Result, Verdict
 from evalplat.numbers.ci import MIN_N, analytic_mean_ci
 from evalplat.numbers.estimate import (
-    Comparison, ComparisonVerdict, Estimate, EstimateError, Metric, compare,
+    Comparison,
+    ComparisonVerdict,
+    Estimate,
+    EstimateError,
+    Metric,
+    compare,
 )
 from evalplat.stats.multiplicity import benjamini_hochberg, paired_pvalue
 

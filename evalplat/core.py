@@ -120,7 +120,8 @@ class Report:
         return "\n".join(lines)
 
     def to_json(self, path: str) -> None:
-        with open(path, "w") as fh:
+        # newline="\n": the file is committed, so it must be byte-identical on every OS.
+        with open(path, "w", encoding="utf-8", newline="\n") as fh:
             json.dump(
                 {
                     "results": [

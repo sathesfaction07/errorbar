@@ -25,7 +25,7 @@ anyone happened to look at the skipped count.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable, Protocol, Sequence
+from typing import Callable, Protocol
 
 from evalplat.audit.provenance import EvalSet, JudgeBundle
 from evalplat.core import Result, Verdict

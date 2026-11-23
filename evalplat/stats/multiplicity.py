@@ -19,7 +19,6 @@ a mask silently bakes in the alpha that happened to be in scope at call time.
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
 from typing import Sequence
 
