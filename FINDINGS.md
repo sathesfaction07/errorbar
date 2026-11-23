@@ -1,4 +1,4 @@
-# FINDINGS — CAP-M7 `evaluation-platform`
+# FINDINGS — CAP-M7 `errorbar`
 
 **Date:** 2026-09-20 · **Status:** core + composition seam complete; S7/S8 and the
 leaderboard not built (§7)
@@ -376,7 +376,7 @@ and local-judge integration rather than the statistics.
 ## 8. Reproduction
 
 ```bash
-cd ~/Documents/Test/portfolio/evaluation-platform
+cd ~/Documents/Test/portfolio/errorbar
 .venv/bin/python -m pytest tests/ -q      # 83 tests, no network
 .venv/bin/python run_capstone.py; echo $? # measured numbers; exit 0/1/2
 ```

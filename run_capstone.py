@@ -413,7 +413,7 @@ def s_promotion(rep: Report) -> None:
 
 
 def main() -> int:
-    print("CAP-M7 evaluation-platform -- capstone run")
+    print("CAP-M7 errorbar -- capstone run")
     print("=" * 78)
     rep = Report()
     rep.require(

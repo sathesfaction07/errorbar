@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "evaluation-platform"
+name = "errorbar"
 version = "1.0.0"
 description = "An evaluation system where every number carries its uncertainty and provenance, and promotion on a gain inside noise is a type error"
 readme = "README.md"
