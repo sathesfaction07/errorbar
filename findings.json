@@ -1,0 +1,209 @@
+{
+  "results": [
+    {
+      "claim": "s1.interval_mandatory",
+      "verdict": "PASS",
+      "reason": "a +2.0pt point gain resolves to INDISTINGUISHABLE; promotion permitted=False",
+      "detail": {
+        "difference": 0.019999999999999907,
+        "diff_ci": [
+          -0.036568542494923875,
+          0.07656854249492369
+        ],
+        "method": "independent-normal-approx"
+      }
+    },
+    {
+      "claim": "s1.wilson_required",
+      "verdict": "PASS",
+      "reason": "the naive interval reaches 1.0188 (>1 is impossible) while Wilson stays inside [0,1] and retains width at the boundary",
+      "detail": {
+        "rows": [
+          {
+            "p": 0.98,
+            "n": 50,
+            "naive_hi": 1.018805307081791,
+            "wilson_width": 0.10141517662473198
+          },
+          {
+            "p": 1.0,
+            "n": 50,
+            "naive_hi": 1.0,
+            "wilson_width": 0.07134759913335864
+          },
+          {
+            "p": 0.98,
+            "n": 100,
+            "naive_hi": 1.0074394957835608,
+            "wilson_width": 0.06450982317838161
+          }
+        ]
+      }
+    },
+    {
+      "claim": "s1.runner",
+      "verdict": "PASS",
+      "reason": "scenario completed",
+      "detail": {}
+    },
+    {
+      "claim": "s1b.overlap_vs_difference",
+      "verdict": "PASS",
+      "reason": "intervals overlap yet the paired difference excludes zero; the difference CI is 26x tighter, so the overlap test would have blocked a real improvement",
+      "detail": {
+        "overlap": true,
+        "verdict": "BETTER",
+        "tightness_ratio": 26.02586056262568
+      }
+    },
+    {
+      "claim": "s1b.runner",
+      "verdict": "PASS",
+      "reason": "scenario completed",
+      "detail": {}
+    },
+    {
+      "claim": "s2.judge_versioning",
+      "verdict": "PASS",
+      "reason": "a judge edit makes the comparison INCOMPARABLE; 5/5 identity fields independently change the hash",
+      "detail": {
+        "verdict": "INCOMPARABLE",
+        "fields_covered": 5
+      }
+    },
+    {
+      "claim": "s2.runner",
+      "verdict": "PASS",
+      "reason": "scenario completed",
+      "detail": {}
+    },
+    {
+      "claim": "s3.judge_human_anchor",
+      "verdict": "PASS",
+      "reason": "agreement floor passes a real judge (alpha=0.840) and fails a majority-class judge that scores 85% raw agreement (alpha=-0.078)",
+      "detail": {
+        "good_alpha": 0.8402562306075468,
+        "lazy_alpha": -0.07837837837837847,
+        "lazy_raw_agreement": 0.85
+      }
+    },
+    {
+      "claim": "s3.runner",
+      "verdict": "PASS",
+      "reason": "scenario completed",
+      "detail": {}
+    },
+    {
+      "claim": "s4.preference_modelling",
+      "verdict": "PASS",
+      "reason": "BT recovers the true order (displacement 0) where win rate does not (4); across 200 schedules win rate misranks 57% vs BT 1%",
+      "detail": {
+        "displacement_winrate": 4,
+        "displacement_bt": 0,
+        "misrank_rate_winrate": 0.57,
+        "misrank_rate_bt": 0.01
+      }
+    },
+    {
+      "claim": "s4.runner",
+      "verdict": "PASS",
+      "reason": "scenario completed",
+      "detail": {}
+    },
+    {
+      "claim": "s5.multiplicity",
+      "verdict": "PASS",
+      "reason": "unadjusted thresholding manufactures 5.01 false winners per leaderboard and declares a winner in 99% of runs where every model is identical; BH holds that to 0.05 and 5%",
+      "detail": {
+        "false_discoveries_unadjusted": 5.012,
+        "false_discoveries_bh": 0.054,
+        "p_any_false_winner_unadjusted": 0.994,
+        "family_size": 96
+      }
+    },
+    {
+      "claim": "s5.runner",
+      "verdict": "PASS",
+      "reason": "scenario completed",
+      "detail": {}
+    },
+    {
+      "claim": "s6.null_judge_fail_closed",
+      "verdict": "PASS",
+      "reason": "the naive path yields 0 scores and no signal; the gate returns COULD_NOT_RUN (which blocks) for both total and partial outage, and PASS for a working judge",
+      "detail": {
+        "naive_len": 0,
+        "dead": "COULD_NOT_RUN",
+        "partial_coverage": 0.8,
+        "working": "PASS"
+      }
+    },
+    {
+      "claim": "s6.runner",
+      "verdict": "PASS",
+      "reason": "scenario completed",
+      "detail": {}
+    },
+    {
+      "claim": "s9.slice_gate",
+      "verdict": "PASS",
+      "reason": "the aggregate reads BETTER (+0.0110) and the aggregate-only gate APPROVES, while the slice gate blocks on 'de' (-0.1512); a clean change still passes",
+      "detail": {
+        "aggregate_delta": 0.011005704357724966,
+        "de_delta": -0.15115792236448433,
+        "naive_gate": "PASS",
+        "slice_gate": "FAIL",
+        "regressed": [
+          "de"
+        ],
+        "reverse_test": "PASS"
+      }
+    },
+    {
+      "claim": "s9.runner",
+      "verdict": "PASS",
+      "reason": "scenario completed",
+      "detail": {}
+    },
+    {
+      "claim": "promotion.composition",
+      "verdict": "PASS",
+      "reason": "5 gates compose into one four-state decision: it blocks a slice-harming change, promotes a clean one, and returns COULD_NOT_RUN -- never promote -- when the slice breakdown or the judge is missing",
+      "detail": {
+        "blocked": "FAIL",
+        "blocking_gates": [
+          "s9.slice[language]"
+        ],
+        "promoted": true,
+        "n_gates": 5,
+        "missing_slices": "COULD_NOT_RUN",
+        "dead_judge": "COULD_NOT_RUN"
+      }
+    },
+    {
+      "claim": "promotion.runner",
+      "verdict": "PASS",
+      "reason": "scenario completed",
+      "detail": {}
+    },
+    {
+      "claim": "s10.cost_latency_axes",
+      "verdict": "PASS",
+      "reason": "a p95 latency DECREASE of 163.9ms reads as BETTER because direction travels in the Metric type",
+      "detail": {
+        "verdict": "BETTER",
+        "difference_ms": -163.8764072861942
+      }
+    },
+    {
+      "claim": "s10.runner",
+      "verdict": "PASS",
+      "reason": "scenario completed",
+      "detail": {}
+    }
+  ],
+  "exit_code": 0,
+  "pass_rate": 1.0,
+  "conclusive": 21,
+  "unverified_required": []
+}
