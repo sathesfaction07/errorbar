@@ -1,6 +1,6 @@
 # Errorbar
 
-*Capstone CAP-M7 in [capstone-specs](../capstone-specs/).*
+*Capstone CAP-M7.*
 
 One evaluation system where **every number carries its uncertainty and its
 provenance**, and where "promoted on a gain inside noise" is not a policy violation
