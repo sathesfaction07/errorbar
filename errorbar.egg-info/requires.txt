@@ -1,0 +1,10 @@
+numpy>=1.26
+scipy>=1.11
+
+[dev]
+pytest>=8.0
+ruff>=0.6
+statsmodels>=0.14
+choix>=0.3.5
+krippendorff>=0.6
+scikit-learn>=1.3

@@ -38,7 +38,7 @@ sanitization      _reference/audit.py --strict -> exit 0, HITS 0, ARTIFACTS 0
 
 ## 2. Mandated crosschecks — all four satisfied, none skipped
 
-The spec requires four external references. Rather than let any become
+The capstone spec requires four external references. Rather than let any become
 `COULD_NOT_RUN`, they were installed into a project venv before a line was written.
 
 | Quantity | Reference | Max abs difference |
@@ -250,7 +250,7 @@ promotes a latency regression; here that is a construction error.
 Eight, all fixed. They are recorded because each is a live instance of the defect
 class the capstone teaches.
 
-1. **`numbers/` shadows the Python standard library.** The spec's own layout names a
+1. **`numbers/` shadows the Python standard library.** The capstone spec's own layout names a
    top-level `numbers/` package. `numbers` is stdlib. Measured: with
    `numbers/__init__.py` present, **`fractions`, `decimal` and `statistics` all fail**
    with `AttributeError: module 'numbers' has no attribute 'Number'`. The trap is
@@ -334,9 +334,9 @@ real eval code contains.
 
 - **No real judge model was called.** `WorkingJudge`/`FlakyJudge`/`UnreachableJudge`
   are fixtures. They prove the gate discriminates, not that any particular LLM judge
-  is well-calibrated. The spec's "local judge models, two families" is **not done**.
+  is well-calibrated. The capstone spec's "local judge models, two families" is **not done**.
 - **The agreement and preference data are synthetic.** The crosschecks against
-  `krippendorff` and `choix` are real and exact, but the spec's pinned public
+  `krippendorff` and `choix` are real and exact, but the capstone spec's pinned public
   preference dataset is **not wired in**.
 - **`bootstrap_ci` labels a lambda statistic as `<lambda>`** in the interval's
   `method` string. Honest but uninformative; a named function gives a useful label.
@@ -376,7 +376,7 @@ and local-judge integration rather than the statistics.
 ## 8. Reproduction
 
 ```bash
-cd ~/Documents/Test/portfolio/errorbar
+cd errorbar
 .venv/bin/python -m pytest tests/ -q      # 83 tests, no network
 .venv/bin/python run_capstone.py; echo $? # measured numbers; exit 0/1/2
 ```

@@ -110,7 +110,7 @@ run_capstone.py          scenario runner; 3-state exit; writes findings.json
 
 ## Why the package is nested under `evalplat/`
 
-**Not a style choice.** The spec's layout puts `numbers/` at the top level, and
+**Not a style choice.** The capstone spec's layout puts `numbers/` at the top level, and
 `numbers` is a **Python standard library module**. Measured: adding an ordinary
 `numbers/__init__.py` breaks `fractions`, `decimal` and `statistics` with
 `AttributeError: module 'numbers' has no attribute 'Number'`. Worse, the trap is
